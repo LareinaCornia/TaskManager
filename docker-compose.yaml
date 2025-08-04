@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - task-service
+      - notification-service
+
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASS=20030808
+      - DB_NAME=taskmanager
+    depends_on:
+      - mysql
+
+  task-service:
+    build: ./services/task-service
+    ports:
+      - "8082:8082"
+
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "8083:8083"
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: 20030808
+      MYSQL_DATABASE: taskmanager
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
